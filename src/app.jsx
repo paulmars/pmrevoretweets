@@ -48,7 +48,6 @@ class Tweet extends React.Component {
 class TweetList extends React.Component {
   render() {
     const tweets = this.props.tweetids.map(id => <Tweet key={id} tweetid={id} />)
-
     return (
       <div>
         {tweets}
@@ -57,13 +56,17 @@ class TweetList extends React.Component {
   }
 }
 
-fetch("/src/words/mac.json")
-    .then(response => response.json())
-    .then(json => {
-      ReactDOM.render(
-        React.createElement(TweetList, {tweetids: json}, null),
-        document.getElementById('app')
-      );
-    });
+function render(json) {
+  ReactDOM.render(
+    React.createElement(TweetList, {tweetids: json}, null),
+    document.getElementById('app')
+  );
+}
+
+fetch("/src/words/reddit.json")
+  .then(response => response.json())
+  .then(json => {
+    render(json);
+  });
 
 document.querySelectorAll('title')[0].textContent = "Twitter";
