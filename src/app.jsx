@@ -2,23 +2,45 @@ import superagent from 'superagent';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-fetch("/src/words/a.json")
-    .then(response => response.json())
-    .then(json => console.log(json));
-
 class Tweet extends React.Component {
   render() {
+    const { tweetid } = this.props.tweet;
+    const url = `https://twitter.com/pm/status/${tweetid}`
     return (
-      <div>
-        hello
+      <div className="tweet">
+        <a href={url}>
+          {this.props.tweet.tweetid}
+        </a>
       </div>
     )
   }
 }
 
-ReactDOM.render(
-  React.createElement(Tweet, {}, null),
-  document.getElementById('app')
-);
+class TweetList extends React.Component {
+  constructor(props) {
+    super(props);
+    console.log(props);
+  }
 
-document.querySelectorAll('title')[0].textContent = "IMDB Top 250";
+  render() {
+
+    const tweets = this.props.tweets.map(tweet => <Tweet tweet={tweet} />)
+
+    return (
+      <div>
+        {tweets}
+      </div>
+    )
+  }
+}
+
+fetch("/src/words/square.json")
+    .then(response => response.json())
+    .then(json => {
+      ReactDOM.render(
+        React.createElement(TweetList, {tweets: json}, null),
+        document.getElementById('app')
+      );
+    });
+
+document.querySelectorAll('title')[0].textContent = "Twitter";
