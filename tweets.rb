@@ -24,7 +24,7 @@ class Tweet
     path = BASE_DIR + "/tweetid"
     FileUtils.mkdir_p(path)
     file = File.new(path + '/' + @tweetid + ".json", 'w')
-    file << { value: @data }.to_json
+    file << @data.to_json
     file.close
   end
 
@@ -48,10 +48,10 @@ class Tweet
       if File.exist?(word_file)
         contents = JSON.parse(File.new(word_file, 'r').read)
       end
-      contents.push({tweetid: @tweetid})
+      contents.push(@tweetid)
 
       file = File.new(word_file, 'w')
-      file << contents.to_json
+      file << contents.uniq.to_json
       file.close
     end
   end
