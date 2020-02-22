@@ -24,14 +24,19 @@ class Tweet extends React.Component {
         .then(response => response.json())
         .then(json => {
           this.setState({tweet: json})
-        });
+        })
     })
   }
 
   componentWillUnmount() {
-    if (this.promise !== null || this.promise !== undefined) {
-      this.promise.abort();
+    if (this.promise === null || this.promise === undefined) {
+      return;
     }
+
+    // if ((typeof this.promise) === "object") {
+    //   console.log(typeof this.promise);
+    //   this.promise.abort();
+    // }
   }
 
   render() {
@@ -60,25 +65,32 @@ class Tweet extends React.Component {
 class InputText extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      path: "",
-    }
-  }
 
-  componentDidMount() {
     const path = window.location.pathname;
     const l = path.slice(1, path.length);
-    this.setState({ path: l })
+    this.state = {
+      path: l,
+    }
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    const { change } = this.props;
+    this.setState({
+      path: e.target.value,
+    })
+    change(e)
   }
 
   render() {
-    const { change } = this.props;
     const { path } = this.state;
     return (
       <input
         type="text"
         name="txt"
-        onChange={change}
+        value={path}
+        onChange={this.handleChange}
       />
     );
   }
@@ -114,7 +126,7 @@ class TweetList extends React.Component {
 
   handleChange(e) {
     const v = e.target.value;
-    // window.history.pushState(v, v, `/${v.toLowerCase()}`);
+    window.history.pushState(v, v, `/${v.toLowerCase()}`);
     this.getData(v);
   }
 
