@@ -29,7 +29,7 @@ class Tweet extends React.Component {
   }
 
   componentWillUnmount() {
-
+    this.promise.abort();
   }
 
   render() {
@@ -68,13 +68,6 @@ class InputText extends React.Component {
   }
 }
 
-function render(json) {
-  ReactDOM.render(
-    React.createElement(TweetList, {tweetids: json}, null),
-    document.getElementById('app')
-  );
-}
-
 class TweetList extends React.Component {
   constructor(props) {
     super(props);
@@ -111,6 +104,10 @@ class TweetList extends React.Component {
   }
 }
 
-render([])
+
+ReactDOM.render(
+  React.createElement(TweetList, {}, null),
+  document.getElementById('app')
+);
 
 document.querySelectorAll('title')[0].textContent = "Twitter";
