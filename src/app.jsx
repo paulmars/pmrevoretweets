@@ -29,7 +29,9 @@ class Tweet extends React.Component {
   }
 
   componentWillUnmount() {
-    this.promise.abort();
+    if (this.promise !== null || this.promise !== undefined) {
+      this.promise.abort();
+    }
   }
 
   render() {
@@ -56,13 +58,26 @@ class Tweet extends React.Component {
 }
 
 class InputText extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      path: "",
+    }
+  }
+
+  componentDidMount() {
+    const path = window.location.pathname;
+    const l = path.slice(1, path.length);
+    this.setState({ path: l })
+  }
+
   render() {
-    const { change, value } = this.props
+    const { change } = this.props;
+    const { path } = this.state;
     return (
       <input
         type="text"
         name="txt"
-        value={value}
         onChange={change}
       />
     );
@@ -74,20 +89,22 @@ class TweetList extends React.Component {
     super(props);
     this.state = {
       tweetids: [],
-      path: "",
     }
     this.handleChange = this.handleChange.bind(this);
     this.getData = lodash.throttle(this.getData.bind(this), 1000, {leading: false, trailing: true});
   }
 
   componentDidMount() {
-    const l = window.location.pathname.slice(1, window.location.pathname.length);
+    const p = window.location.pathname;
+    const l = p.slice(1, p.length);
     this.getData(l);
-    this.setState({ path: l })
   }
 
   getData(value) {
     const url = `/src/words/${value}.json`;
+    if (value === "") {
+      return
+    }
     fetch(url).then(response => response.json()).then(json => {
       this.setState({
         tweetids: json,
@@ -96,16 +113,16 @@ class TweetList extends React.Component {
   }
 
   handleChange(e) {
-    const value = e.target.value;
-    window.history.pushState(value, value, `/${value.toLowerCase()}`);
-    this.getData(value);
+    const v = e.target.value;
+    // window.history.pushState(v, v, `/${v.toLowerCase()}`);
+    this.getData(v);
   }
 
   render() {
     const tweets = this.state.tweetids.map(id => <Tweet key={id} tweetid={id} />)
     return (
       <div>
-        <InputText change={this.handleChange} value={this.state.path} />
+        <InputText change={this.handleChange} />
         {tweets}
       </div>
     );
