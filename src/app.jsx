@@ -2,6 +2,9 @@ import superagent from 'superagent';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import lodash from 'lodash';
+import throttledQueue from 'throttled-queue';
+
+let throttle = throttledQueue(1, 1000)
 
 class Tweet extends React.Component {
   constructor(props) {
@@ -15,11 +18,13 @@ class Tweet extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`/src/tweetid/${this.props.tweetid}.json`)
-    .then(response => response.json())
-    .then(json => {
-      this.setState({tweet: json})
-    });
+    throttle(() => {
+      fetch(`/src/tweetid/${this.props.tweetid}.json`)
+      .then(response => response.json())
+      .then(json => {
+        this.setState({tweet: json})
+      });
+    })
   }
 
   render() {
@@ -68,24 +73,30 @@ function render(json) {
 class TweetList extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      tweetids: [],
+    }
     this.handleChange = this.handleChange.bind(this);
-    this.getData = lodash.throttle(this.getData.bind(this), 2000, {leading: true, trailing: true});
+    this.getData = lodash.throttle(this.getData.bind(this), 1000, {leading: false, trailing: true});
   }
 
   getData(value) {
     const url = `/src/words/${value}.json`;
-    console.log(url);
     fetch(url).then(response => response.json()).then(json => {
-      render(json);
+      this.setState({
+        tweetids: json,
+      })
     });
   }
 
   handleChange(e) {
-    this.getData(e.target.value);
+    const value = e.target.value;
+    window.history.pushState(value, value, `/${value.toLowerCase()}`);
+    this.getData(value);
   }
 
   render() {
-    const tweets = this.props.tweetids.map(id => <Tweet key={id} tweetid={id} />)
+    const tweets = this.state.tweetids.map(id => <Tweet key={id} tweetid={id} />)
     return (
       <div>
         <InputText change={this.handleChange} />
