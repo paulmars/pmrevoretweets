@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import lodash from 'lodash';
 import throttledQueue from 'throttled-queue';
 
-let throttle = throttledQueue(1, 1000)
+let throttle = throttledQueue(2, 333)
 
 class Tweet extends React.Component {
   constructor(props) {
@@ -15,16 +15,21 @@ class Tweet extends React.Component {
         full_text: ""
       },
     };
+    this.promise = null;
   }
 
   componentDidMount() {
     throttle(() => {
-      fetch(`/src/tweetid/${this.props.tweetid}.json`)
-      .then(response => response.json())
-      .then(json => {
-        this.setState({tweet: json})
-      });
+      this.promise = fetch(`/src/tweetid/${this.props.tweetid}.json`)
+        .then(response => response.json())
+        .then(json => {
+          this.setState({tweet: json})
+        });
     })
+  }
+
+  componentWillUnmount() {
+
   }
 
   render() {
