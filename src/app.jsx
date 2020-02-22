@@ -69,7 +69,7 @@ class TweetList extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    this.getData = lodash.throttle(this.getData.bind(this), 0, {leading: true, trailing: true});
+    this.getData = lodash.throttle(this.getData.bind(this), 2000, {leading: true, trailing: true});
   }
 
   getData(value) {
