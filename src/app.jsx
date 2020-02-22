@@ -57,11 +57,12 @@ class Tweet extends React.Component {
 
 class InputText extends React.Component {
   render() {
-    const { change } = this.props
+    const { change, value } = this.props
     return (
       <input
         type="text"
         name="txt"
+        value={value}
         onChange={change}
       />
     );
@@ -73,9 +74,16 @@ class TweetList extends React.Component {
     super(props);
     this.state = {
       tweetids: [],
+      path: "",
     }
     this.handleChange = this.handleChange.bind(this);
     this.getData = lodash.throttle(this.getData.bind(this), 1000, {leading: false, trailing: true});
+  }
+
+  componentDidMount() {
+    const l = window.location.pathname.slice(1, window.location.pathname.length);
+    this.getData(l);
+    this.setState({ path: l })
   }
 
   getData(value) {
@@ -97,7 +105,7 @@ class TweetList extends React.Component {
     const tweets = this.state.tweetids.map(id => <Tweet key={id} tweetid={id} />)
     return (
       <div>
-        <InputText change={this.handleChange} />
+        <InputText change={this.handleChange} value={this.state.path} />
         {tweets}
       </div>
     );
