@@ -42,7 +42,6 @@ class Tweet
     FileUtils.mkdir_p(path)
 
     words.each do |word|
-
       word_file = "#{path}/#{word.to_s}.json"
       contents = []
       if File.exist?(word_file)
@@ -56,13 +55,31 @@ class Tweet
     end
   end
 
+  def best_days
+    days = Dir.glob("src/date/*/*").map{|p| "#{p.split(/[\/\.]+/)[2]}/#{p.split(/[\/\.]+/)[3]}" }
+    best = []
+
+    days.each do |day|
+      tweets = Dir.glob("src/date/#{day}/**")
+      tweets.each do |tweet|
+        tweet_data = JSON.parse(File.open("./#{tweet}", 'r').read)
+        best.push(tweet_data)
+        best = best.uniq.sort{|a, b| b["favorite_count"].to_i <=> a["favorite_count"].to_i }[0..100]
+      end
+
+      file = File.new("src/date/#{day}.json", 'w')
+      file << best.to_json
+      file.close
+    end
+  end
 end
 
 json_tweets.each_with_index do |json_tweet, index|
   tweet = Tweet.new(json_tweet["tweet"])
-  ap index
-  tweet.write_all
-  tweet.write_to_month
-  tweet.write_words
+  # ap index
+  # tweet.write_all
+  # tweet.write_to_month
+  # tweet.write_words
+  tweet.best_days
 end; true
 
