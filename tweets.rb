@@ -55,8 +55,8 @@ class Tweet
     end
   end
 
-  def best_days
-    days = Dir.glob("src/date/*/*").map{|p| "#{p.split(/[\/\.]+/)[2]}/#{p.split(/[\/\.]+/)[3]}" }
+  def self.best_months
+    days = Dir.glob("src/date/*/*").map{|p| "#{p.split(/[\/\.]+/)[2]}/#{p.split(/[\/\.]+/)[3]}" }.uniq.sort
     best = []
 
     days.each do |day|
@@ -80,6 +80,7 @@ json_tweets.each_with_index do |json_tweet, index|
   # tweet.write_all
   # tweet.write_to_month
   # tweet.write_words
-  tweet.best_days
 end; true
+
+Tweet.best_months
 
