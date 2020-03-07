@@ -16,7 +16,7 @@ class Tweet extends React.Component {
 
   componentDidMount() {
     throttle(() => {
-      this.promise = fetch(`/src/tweetid/${this.props.tweetid}.json`)
+      this.promise = fetch(`/src/tweetid/${this.props.tweet["id"]}.json`)
         .then(response => response.json())
         .then(json => {
           this.setState({tweet: json})
@@ -47,11 +47,21 @@ class Tweet extends React.Component {
   }
 
   render() {
-    const { tweetid } = this.props;
-    const url = `https://twitter.com/pm/status/${tweetid}`
+    const { tweet } = this.props;
+    const tweetid = tweet["id"];
+    console.log("tweet", tweet);
+    const url = `https://twitter.com/pm/status/${tweet["id"]}`
     return (
-      <div id={`tweet-${tweetid}`} className="offset-sm-4 col-sm-4">
+      <div id={`tweet-${tweetid}`}>
         <div className="tweet">
+          <blockquote className="twitter-tweet" data-lang="en">
+            <p lang="en" dir="ltr">
+              {tweet.full_text}
+            </p>
+            <a href={url}>
+              {tweet.created_at}
+            </a>
+          </blockquote>
         </div>
       </div>
     )
@@ -179,10 +189,8 @@ class TweetList extends React.Component {
     const url = `/src/date/${year}/${mString}.json`;
     console.log("url", url);
     fetch(url).then(response => {
-      console.log("response", response);
       return response.json();
     }).then(tweets => {
-      console.log("tweets", tweets);
       this.setState({ tweets })
     });
   }
@@ -203,7 +211,7 @@ class TweetList extends React.Component {
           </div>
           <div className="col-sm-10">
             <h1>Tweets</h1>
-            {tweets.map(tweet => <Tweet key={`tweet${tweet["id"]}`} tweetid={tweet["id"]} />)}
+            {tweets.map(tweet => <Tweet key={`tweet${tweet["id"]}`} tweet={tweet} />)}
           </div>
         </div>
       </div>
