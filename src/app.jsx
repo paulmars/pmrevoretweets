@@ -108,6 +108,12 @@ class InputText extends React.Component {
   }
 }
 
+class BestTweets extends React.Component {
+  render() {
+    const { year, month, day } = this.props;
+  }
+}
+
 class Year extends React.Component {
   render() {
     const { year } = this.props;
@@ -207,6 +213,8 @@ class TweetList extends React.Component {
 
     console.log(this.state)
 
+    const { year, month, day } = this.state;
+
     return (
       <div className="container-fluid">
         <div className="row">
@@ -218,9 +226,13 @@ class TweetList extends React.Component {
             <h1>Months</h1>
             {months.map(m => <Month key={`month${m}`} month={m} handleMonth={() => this.handleMonth(m)} />)}
           </div>
-          <div className="col-sm-10">
+          <div className="col-sm-1">
             <h1>Days</h1>
             {days.map(d => <Day key={`day${d}`} day={d} handleDay={() => this.handleDay(d)} />)}
+          </div>
+          <div className="col-sm-9">
+            <h1>Tweets</h1>
+            <BestTweets year={year} month={month} day={day} />
           </div>
         </div>
       </div>
