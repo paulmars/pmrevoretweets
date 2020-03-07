@@ -69,13 +69,6 @@ class Tweet
         best = best.uniq.sort{|a, b| b["favorite_count"].to_i <=> a["favorite_count"].to_i }[0..100]
       end
 
-      # ap day
-      # ap best.map{|t| {
-      #   created_at: DateTime.parse(t["created_at"]).month,
-      #   fav: t["favorite_count"],
-      #   tweet: t["full_text"],
-      # }}
-
       file = File.new("src/date/#{month}.json", 'w')
       file << best.to_json
       file.close

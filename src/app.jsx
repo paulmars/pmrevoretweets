@@ -128,7 +128,7 @@ class TweetList extends React.Component {
   }
 
   handleYear(year) {
-    this.setState({ year })
+    this.setState({ year, month: undefined })
   }
 
   handleMonth(month) {
@@ -155,7 +155,7 @@ class TweetList extends React.Component {
 
   render() {
     const { year, month, day, tweets } = this.state;
-    const months = lodash.range(1, 12 + 1);
+    const months = lodash.reverse(lodash.range(1, 12 + 1));
     const orderedTweets = tweets.sort((a, b) => parseInt(a["favorite_count"]) < parseInt(b["favorite_count"]))
     return (
       <div className="container-fluid">
