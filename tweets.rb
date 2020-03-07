@@ -56,18 +56,20 @@ class Tweet
   end
 
   def self.best_months
-    days = Dir.glob("src/date/*/*").map{|p| "#{p.split(/[\/\.]+/)[2]}/#{p.split(/[\/\.]+/)[3]}" }.uniq.sort
-    best = []
+    months = Dir.glob("src/date/*/*").map{|p| "#{p.split(/[\/\.]+/)[2]}/#{p.split(/[\/\.]+/)[3]}" }.uniq.sort
+    ap months
 
-    days.each do |day|
-      tweets = Dir.glob("src/date/#{day}/**")
+    months.each do |month|
+      tweets = Dir.glob("src/date/#{month}/**")
+
+      best = []
       tweets.each do |tweet|
         tweet_data = JSON.parse(File.open("./#{tweet}", 'r').read)
         best.push(tweet_data)
         best = best.uniq.sort{|a, b| b["favorite_count"].to_i <=> a["favorite_count"].to_i }[0..100]
       end
 
-      file = File.new("src/date/#{day}.json", 'w')
+      file = File.new("src/date/#{month}.json", 'w')
       file << best.to_json
       file.close
     end
