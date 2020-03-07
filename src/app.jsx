@@ -145,9 +145,18 @@ class TweetList extends React.Component {
   render() {
     const tweets = this.state.tweetids.map(id => <Tweet key={id} tweetid={id} />)
     return (
-      <div>
-        <InputText change={this.handleChange} />
-        {tweets}
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-1">
+            <h1>Years</h1>
+          </div>
+          <div class="col-sm-1">
+            <h1>Months</h1>
+          </div>
+          <div class="col-sm-10">
+            <h1>Tweets</h1>
+          </div>
+        </div>
       </div>
     );
   }
