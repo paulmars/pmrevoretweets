@@ -128,11 +128,18 @@ class TweetList extends React.Component {
   }
 
   handleYear(year) {
-    this.setState({ year, month: undefined })
+    this.setState({
+      year,
+      month: undefined,
+      tweets: [],
+    })
   }
 
   handleMonth(month) {
-    this.setState({ month }, this.getData())
+    this.setState({
+      month,
+      tweets: [],
+    }, this.getData())
   }
 
   getData() {
