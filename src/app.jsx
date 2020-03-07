@@ -16,6 +16,7 @@ class Tweet extends React.Component {
       },
     };
     this.promise = null;
+    this.bump = this.bump.bind(this);
   }
 
   componentDidMount() {
@@ -24,6 +25,7 @@ class Tweet extends React.Component {
         .then(response => response.json())
         .then(json => {
           this.setState({tweet: json})
+          this.bump();
         })
     })
   }
@@ -39,11 +41,21 @@ class Tweet extends React.Component {
     // }
   }
 
+  bump() {
+    const { tweetid } = this.props;
+    setTimeout(() => {
+      console.log("!");
+      twttr.widgets.load(
+        document.getElementById(`tweet-${tweetid}`)
+      );
+    }, 1000)
+  }
+
   render() {
     const { tweetid } = this.props;
     const url = `https://twitter.com/pm/status/${tweetid}`
     return (
-      <div className="offset-sm-4 col-sm-4">
+      <div id={`tweet-${tweetid}`} className="offset-sm-4 col-sm-4">
         <div className="tweet">
           <a href={url}>
             {this.props.tweet}
