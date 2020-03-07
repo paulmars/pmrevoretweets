@@ -3,9 +3,8 @@ ITS DONE
 # babel, revore
 yarn install
 
-# compile
-npm install -g webpack webpack-cli
-webpack --mode=development -w
+# compile with webpack
+yarn watch
 
 # serve
 revore tweets-pm
