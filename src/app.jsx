@@ -9,12 +9,7 @@ let throttle = throttledQueue(2, 333)
 class Tweet extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      tweet: {
-        date: "",
-        full_text: ""
-      },
-    };
+    this.state = {};
     this.promise = null;
     this.bump = this.bump.bind(this);
   }
@@ -57,17 +52,6 @@ class Tweet extends React.Component {
     return (
       <div id={`tweet-${tweetid}`} className="offset-sm-4 col-sm-4">
         <div className="tweet">
-          <a href={url}>
-            {this.props.tweet}
-          </a>
-          <blockquote className="twitter-tweet" data-lang="en">
-            <p lang="en" dir="ltr">
-              {this.state.tweet.full_text}
-            </p>
-            <a href={url}>
-              {this.state.tweet.created_at}
-            </a>
-          </blockquote>
         </div>
       </div>
     )
@@ -105,48 +89,6 @@ class InputText extends React.Component {
         onChange={this.handleChange}
       />
     );
-  }
-}
-
-class BestTweets extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tweets: [],
-      year: undefined,
-      month: undefined,
-    }
-  }
-
-  componentDidMount() {
-    this.getData();
-  }
-
-  getData(value) {
-    const { year, month } = this.props;
-    console.log("fetch!", this.props);
-
-    if ( year === undefined || month === undefined) {
-      return
-    }
-
-    const url = `/src/date/${year}/${month}.json`;
-    if (value === "") {
-      return
-    }
-
-    console.log("fetch!")
-    fetch(url).then(response => response.json()).then(tweets => {
-      this.setState({ tweets })
-    });
-  }
-
-  render() {
-    const { year, month, day } = this.props;
-    console.log(this.state.tweets);
-    return (
-      <div>sdf</div>
-    )
   }
 }
 
@@ -195,32 +137,19 @@ class TweetList extends React.Component {
     const d = new Date();
     const years = lodash.range(d.getFullYear(), 2006);
     this.state = {
-      tweetids: [],
+      tweets: [],
       years,
+      year: 2020,
+      month: 2,
     }
     this.handleChange = this.handleChange.bind(this);
     this.getData = lodash.throttle(this.getData.bind(this), 1000, {leading: false, trailing: true});
     this.handleYear = this.handleYear.bind(this);
     this.handleMonth = this.handleMonth.bind(this);
-    this.handleDay = this.handleDay.bind(this);
   }
 
   componentDidMount() {
-    const p = window.location.pathname;
-    const l = p.slice(1, p.length);
-    this.getData(l);
-  }
-
-  getData(value) {
-    const url = `/src/words/${value}.json`;
-    if (value === "") {
-      return
-    }
-    fetch(url).then(response => response.json()).then(json => {
-      this.setState({
-        tweetids: json,
-      })
-    });
+    this.getData();
   }
 
   handleChange(e) {
@@ -234,23 +163,33 @@ class TweetList extends React.Component {
   }
 
   handleMonth(month) {
-    this.setState({ month })
+    this.setState({ month }, this.getData())
   }
 
-  handleDay(day) {
-    this.setState({ day })
+  getData() {
+    const { year, month } = this.state;
+    console.log("fetch!", this.state);
+
+    if ( year === undefined || month === undefined) {
+      return
+    }
+
+    const mString = month.toString().padStart(2, '0');
+
+    const url = `/src/date/${year}/${mString}.json`;
+    console.log("url", url);
+    fetch(url).then(response => {
+      console.log("response", response);
+      return response.json();
+    }).then(tweets => {
+      console.log("tweets", tweets);
+      this.setState({ tweets })
+    });
   }
 
   render() {
-    const tweets = this.state.tweetids.map(id => <Tweet key={id} tweetid={id} />)
+    const { year, month, day, tweets } = this.state;
     const months = lodash.range(1, 12 + 1);
-    const daysInMonth = new Date(2012, 2, 0).getDate();
-    const days = lodash.range(1, daysInMonth + 1);
-
-    console.log(this.state)
-
-    const { year, month, day } = this.state;
-
     return (
       <div className="container-fluid">
         <div className="row">
@@ -262,13 +201,9 @@ class TweetList extends React.Component {
             <h1>Months</h1>
             {months.map(m => <Month key={`month${m}`} month={m} handleMonth={() => this.handleMonth(m)} />)}
           </div>
-          <div className="col-sm-1">
-            <h1>Days</h1>
-            {days.map(d => <Day key={`day${d}`} day={d} handleDay={() => this.handleDay(d)} />)}
-          </div>
-          <div className="col-sm-9">
+          <div className="col-sm-10">
             <h1>Tweets</h1>
-            <BestTweets year={year} month={month} day={day} />
+            {tweets.map(tweet => <Tweet key={`tweet${tweet["id"]}`} tweetid={tweet["id"]} />)}
           </div>
         </div>
       </div>
