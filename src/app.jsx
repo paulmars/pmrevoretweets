@@ -63,11 +63,17 @@ class Tweet extends React.Component {
 
 class Year extends React.Component {
   render() {
-    const { year } = this.props;
+    const { text, year } = this.props;
+    const classes = ["btn"]
+    if (text === year) {
+      classes.push("btn-outline-primary")
+    } else {
+      classes.push("btn btn-outline-secondary")
+    }
     return (
       <div className="year">
-        <button onClick={this.props.handleYear}>
-          {year}
+        <button type="button" className={classes} href="#" onClick={this.props.handleYear}>
+          {text}
         </button>
       </div>
     )
@@ -76,24 +82,17 @@ class Year extends React.Component {
 
 class Month extends React.Component {
   render() {
-    const { month } = this.props;
+    const { text, month } = this.props;
+    const classes = ["btn"]
+    if (text === month) {
+      classes.push("btn-outline-primary")
+    } else {
+      classes.push("btn-outline-secondary")
+    }
     return (
       <div className="month">
-        <button onClick={this.props.handleMonth}>
-          {month}
-        </button>
-      </div>
-    )
-  }
-}
-
-class Day extends React.Component {
-  render() {
-    const { day } = this.props;
-    return (
-      <div className="day">
-        <button onClick={this.props.handleDay}>
-          {day}
+        <button type="button" className={classes} href="#" onClick={this.props.handleMonth}>
+          {text}
         </button>
       </div>
     )
@@ -169,11 +168,11 @@ class TweetList extends React.Component {
         <div className="row">
           <div className="col-sm-1">
             <h1>Years</h1>
-            {this.state.years.map(y => <Year key={`year${y}`} year={y} handleYear={() => this.handleYear(y)} />)}
+            {this.state.years.map(y => <Year key={`year${y}`} text={y} year={year} handleYear={() => this.handleYear(y)} />)}
           </div>
           <div className="col-sm-1">
             <h1>Months</h1>
-            {months.map(m => <Month key={`month${m}`} month={m} handleMonth={() => this.handleMonth(m)} />)}
+            {months.map(m => <Month key={`month${m}`} text={m} month={month} handleMonth={() => this.handleMonth(m)} />)}
           </div>
           <div className="col-sm-10">
             <h1>Tweets</h1>
