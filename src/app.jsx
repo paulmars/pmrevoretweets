@@ -109,8 +109,44 @@ class InputText extends React.Component {
 }
 
 class BestTweets extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tweets: [],
+      year: undefined,
+      month: undefined,
+    }
+  }
+
+  componentDidMount() {
+    this.getData();
+  }
+
+  getData(value) {
+    const { year, month } = this.props;
+    console.log("fetch!", this.props);
+
+    if ( year === undefined || month === undefined) {
+      return
+    }
+
+    const url = `/src/date/${year}/${month}.json`;
+    if (value === "") {
+      return
+    }
+
+    console.log("fetch!")
+    fetch(url).then(response => response.json()).then(tweets => {
+      this.setState({ tweets })
+    });
+  }
+
   render() {
     const { year, month, day } = this.props;
+    console.log(this.state.tweets);
+    return (
+      <div>sdf</div>
+    )
   }
 }
 
